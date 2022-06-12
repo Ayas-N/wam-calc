@@ -9,7 +9,42 @@ def check(num):
         print("Please enter a valid input (Non-string >= 0)")
         return None
 
-    return num   
+    return num
+
+def int_check(num):
+    '''Performs the same function as check, but ensures num is always an integer'''
+    try:
+        num = int(num)
+        if num < 0: 
+            raise ValueError
+
+    except ValueError:
+        print("Please enter a valid input (Non-string >= 0)")
+        return None
+
+    return num
+
+def level_check(level):
+    '''Checks if the level of the unit given by the user is valid, returns None otherwise'''
+    if level == "thesis":
+        return 8
+
+    level = int_check(level)
+    if level >= 1:
+        if level == 1:
+            return 0
+
+        elif level == 2:
+            return 2
+        
+        elif level == 3:
+            return 3
+        
+        elif level >= 4:
+            return 4
+    
+    print("Please enter a valid input (Non-string >= 0)")
+    return None
 
 def calc(marks_ls):
     '''Takes in a list of tuples (weighting, marks) and reutrns a float subject_mark'''
@@ -24,14 +59,20 @@ def final_calc(subj_ls):
     cp_marks = 0
     cp_sum = 0
     for i in range(len(subj_ls)):
-        cp_marks += (subj_ls[i][0] * subj_ls[i][1])
-        cp_sum += subj_ls[i][0]
+        cp_marks += (subj_ls[i][0] * subj_ls[i][1] * subj_ls[i][3])
+        cp_sum += subj_ls[i][0] * subj_ls[i][3]
 
-    return (cp_marks/cp_sum)
+    try:
+        total = (cp_marks/cp_sum)
+
+    except ZeroDivisionError:
+        print("It seems that you have not given any units above first year, perhaps try the WAM calc program instead....")
+        return None
+
+    return total
 
 def wam_summary(subj_ls):
     '''Returns a formatted string containing Subject number, credit point, and marks scored for that subject'''
-    breakpoint()
     str_out = ""
     for i in range(len(subj_ls)):
         str_out += f"Subject {subj_ls[i][2]}, {int(subj_ls[i][0])} cp- {subj_ls[i][1]} marks\n"
@@ -51,18 +92,16 @@ def main():
                 print("No input was received. Have a good day :)")
                 break
 
-            print(f"Your final WAM is {final_calc(subj_ls)}")
+            print(f"Your final EHIWAM is {final_calc(subj_ls)}")
             print(wam_summary(subj_ls))
             break
 
-        try:
-            cp = int(cp)
-            if cp <= 0: 
-                raise ValueError
-
-        except ValueError:
-            print("Please enter a valid input (Non-string >= 0)")
+        cp = int_check(cp)
+        if cp == None:
             continue
+        
+        level = input("What level of study is this unit? ").lower().strip()
+        level = level_check(level)
 
         # Inner loop, keeps track of weighting and marks for the subject.
         weight = 100
@@ -98,7 +137,7 @@ def main():
 
         # Create a tuple, add it to subject list so it can be displayed later.
         subj_mark = calc(unit_ls)
-        unit_tup = (cp, subj_mark, subject_no)
+        unit_tup = (cp, subj_mark, subject_no, level)
         subj_ls.append(unit_tup)
         subject_no += 1
 
