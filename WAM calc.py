@@ -79,18 +79,19 @@ def main():
 
             usr_weight += usr_input
             usr_mark = 0
+
+            if usr_weight > 100:
+                print("The total weighting of your marks was more than 100. Please try again.")
+                usr_weight = 0
+                continue
+
             # Get percentage
             usr_mark = check(input("Enter the percentage you've scored for the assessment here: "))
 
             if usr_mark == None:
                 usr_weight -= usr_input
                 continue
-
-            if usr_weight > 100:
-                print("The total weighting of your marks was more than 100. Please try again.")
-                usr_weight = 0
-                continue
-                
+ 
             # Create a tuple of (weighting, user mark) add this to a list to be used in calc()
             unit_mark = (usr_input, usr_mark)
             unit_ls.append(unit_mark)
